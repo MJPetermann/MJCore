@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var fs = require('fs');
-var url = fs.readFileSync('D:/GitHub/mjcore/MJCore/url', 'utf8');
+var url = fs.readFileSync("./url", 'utf8');
 module.exports = (guildId) => {
   return new Promise(resolve => {
     MongoClient.connect(url, function(err, db) {
@@ -12,7 +12,6 @@ module.exports = (guildId) => {
       query[name] = value;
       dbo.collection("servers").findOne(query, (err, result)=>{
         if(err) throw err;
-        console.log(result);
         if(result == null){
           resolve(false);
           

@@ -2,38 +2,19 @@
 var fs = require('fs');
 const Discord = require('discord.js');
 
-
-//Adding custom Modules
-var checkServer = require('D:/GitHub/mjcore/MJCore/MJModules/checkServer.js');
-var createServer = require('D:/GitHub/mjcore/MJCore/MJModules/createServer.js');
-var commands = require('D:/GitHub/mjcore/MJCore/MJModules/commands.js');
-
 const client = new Discord.Client();
-var contents = fs.readFileSync('D:/GitHub/mjcore/MJCore/key', 'utf8');
+var contents = fs.readFileSync("./key", 'utf8');
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-  
-  // checking existence and creating non existent Object on MongoDB
-  Array.from(client.guilds.cache).forEach(async function(value, index, arr){
-    let exist = await checkServer(arr[index][0]);
-    console.log(exist);
-    if(!exist){
-      createServer(arr[index][0], arr[index][1].owner.id);
-    }
-    
+fs.readdir("./events/", (err, files) => {
+  if (err) return console.error(err);
+  files.forEach(file => {
+    const event = require(`./events/${file}`);
+    let eventName = file.split(".")[0];
+    client.on(eventName, event.bind(null, client));
   });
-
-
 });
 
-client.on('voiceStateUpdate', () => {
-  console.log("Veränderung");
-});
-
-client.on('message', commands(msg));
-
-client.commands = new Enmap();
+client.commands = new Discord.Collection();
 
 fs.readdir("./commands/", (err, files) => {
   if (err) return console.error(err);
@@ -45,5 +26,4 @@ fs.readdir("./commands/", (err, files) => {
     client.commands.set(commandName, props);
   });
 });
-
 client.login(contents);
