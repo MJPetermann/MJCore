@@ -1,2 +1,2 @@
 # MJCore
-The core for the MJ-Ecosystem.
+A discord bot to automaticly create channals on demand
